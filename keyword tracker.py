@@ -1,7 +1,5 @@
 from pynput import keyboard
 
-
-
 def on_press(key):
     # this function is tracking and printing all the keys the user is typing haha
 
@@ -17,7 +15,5 @@ listener = keyboard.Listener(on_press=on_press)
 
 listener.start()
 listener.join()
-#wwwwww
-print("a")
-print("b")
 print("c")
+print("a")

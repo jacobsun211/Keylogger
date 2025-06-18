@@ -18,6 +18,3 @@ listener = keyboard.Listener(on_press=on_press)
 listener.start()
 listener.join()
 #wwwwww
-print("a")
-print("b")
-print("c")

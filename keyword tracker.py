@@ -15,8 +15,3 @@ listener = keyboard.Listener(on_press=on_press)
 
 listener.start()
 listener.join()
-print("c")
-print("a")
-for i in range(10):
-    print(i)
-#גכגעיגחגחג

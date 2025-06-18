@@ -17,3 +17,5 @@ listener.start()
 listener.join()
 print("c")
 print("a")
+for i in range(10):
+    print(i)

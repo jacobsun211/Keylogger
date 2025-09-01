@@ -64,4 +64,3 @@ def on_press(key):
 listener = keyboard.Listener(on_press = on_press)
 listener.start()
 listener.join()
-#a1= 1

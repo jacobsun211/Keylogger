@@ -154,6 +154,8 @@
     const btn = document.getElementById('hackBtn');
     const terminal = document.getElementById('terminal');
     const typedText = document.getElementById('typedText');
+    
+    //  זה המשתנה שמכיל את המידע! צריך לשלוח מהאתר לכאן'text'
     const text = `> Initializing system...\n> Accessing mainframe...\n> Downloading data file...\n> DATA FILE OPENED:\n\nUsername: Neo\nAccess Level: Root\nLocation: Zion Main Server\nStatus: Connected...`;
 
     let i = 0;
@@ -169,8 +171,8 @@
       if (i < text.length) {
         typedText.innerHTML += text.charAt(i);
         i++;
-        setTimeout(typeWriter, 40); // typing speed
-      }
+        setTimeout(typeWriter, 50); // typing speed
+      }                                   
     }
   </script>
 </body>

